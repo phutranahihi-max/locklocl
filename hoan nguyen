@@ -1,0 +1,22 @@
+/*
+ * Locket Reset Script - Đưa ứng dụng về bản thường
+ * Chức năng: Ép Locket tải lại cấu hình gốc từ máy chủ và xóa sạch cache Mod
+ */
+
+let body = $response.body;
+
+if (body) {
+    try {
+        let obj = JSON.parse(body);
+        
+        // Chỉ cần ép trạng thái UPDATE với nguyên bản dữ liệu gốc (không thêm cờ Mod)
+        // Locket sẽ tự động ghi đè và xóa bỏ toàn bộ tính năng Gold/Meme ảo
+        obj.state = "UPDATE";
+
+        body = JSON.stringify(obj);
+    } catch (e) {
+        console.log("Locket Reset Error: " + e);
+    }
+}
+
+$done({ body });
