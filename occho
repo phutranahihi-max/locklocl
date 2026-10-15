@@ -1,6 +1,6 @@
 /*
- * Locket Gold Unlock Script - Trích xuất chuẩn từ RemoteConfig.json
- * Fix lỗi Âm thanh & Mất Chú thích / Meme
+ * Locket Gold Unlock Script - Bản Full Overlay Memes
+ * Khôi phục đầy đủ Tính năng đặc biệt (Nhạc, Giờ, Thời tiết) & Meme
  */
 
 let body = $response.body;
@@ -10,12 +10,9 @@ if (body) {
         let obj = JSON.parse(body);
         if (!obj.entries) obj.entries = {};
 
-        // Hàm hỗ trợ gán giá trị an toàn định dạng String cho Firebase
         const setKey = (k, v) => { obj.entries[k] = v; };
 
-        // ==========================================
-        // 1. MỞ KHÓA TÀI KHOẢN GOLD & GIAO DIỆN
-        // ==========================================
+        // 1. MỞ KHÓA TÀI KHOẢN GOLD CƠ BẢN
         setKey("purchases_enabled", "true");
         setKey("purchases_entitlement", "Gold");
         setKey("gold_member", "true");
@@ -27,16 +24,30 @@ if (body) {
         setKey("locket_gold_badge", "true");
         setKey("profile_gold_badge", "true");
         setKey("gold_membership_card", "true");
-        setKey("show_gold_since", "true");
-        setKey("upsell_features", JSON.stringify({
-            "custom_widget_frames": true,
-            "app_icon_picker": true,
-            "unlimited_friends": true
-        }));
 
-        // ==========================================
-        // 2. KHÔI PHỤC CHÚ THÍCH (GIỜ, THỜI TIẾT, NHẠC)
-        // ==========================================
+        // 2. ÉP CỜ CAMERA & VIDEO (Client-side)
+        setKey("gold_max_duration", "30.0");
+        setKey("max_video_duration", "30.0");
+        setKey("video_max_duration", "30.0");
+        setKey("goldMaxDuration", "30.0");
+        setKey("longer_video_enabled", "true");
+        setKey("longer_videos_enabled", "true");
+        setKey("video_sound_enabled", "true");
+        setKey("microphone_enabled", "true");
+        setKey("camera_microphone_enabled", "true");
+        setKey("camera_roll_preview_enabled", "true");
+        setKey("internal_camera_roll_video_upload_enabled", "true");
+
+        // 3. MỞ KHÓA UI KHÁC
+        setKey("custom_widget_frames_unlocked", "true");
+        setKey("custom_widget_frames_enabled", "true");
+        setKey("widget_frames_unlocked", "true");
+        setKey("widget_frames_enabled", "true");
+        setKey("app_icon_picker", "true");
+        setKey("history_ads_mode", "disabled");
+        setKey("history_ads_floor_price", "0");
+
+        // 4. KÍCH HOẠT CHÚ THÍCH & CÔNG CỤ (OVERLAYS)
         setKey("captions_enabled", "true");
         setKey("long_captions", "true");
         setKey("music_caption_enabled", "true");
@@ -53,74 +64,214 @@ if (body) {
         setKey("overlay_dynamic_captions", JSON.stringify([
             "standard", "location", "weather", "time"
         ]));
-        // Không can thiệp "overlay_items" để giữ nguyên 100% kho Meme gốc của Server.
 
-        // ==========================================
-        // 3. FIX CAMERA: ÂM THANH, MIC & VIDEO 30S
-        // ==========================================
-        setKey("video_sound_enabled", "true");
-        setKey("microphone_enabled", "true");
-        setKey("camera_microphone_enabled", "true");
-        setKey("longer_video_enabled", "true");
-        setKey("longer_videos_enabled", "true");
-        setKey("gold_max_duration", "30.0");
-        setKey("max_video_duration", "30.0");
-        setKey("goldMaxDuration", "30.0");
-
-        setKey("camera", JSON.stringify({
-            "gold_max_duration": 30,
-            "goldMaxDuration": 30,
-            "ultra_wide": true,
-            "ultraWide": true,
-            "volume_button": true,
-            "volumeButton": true,
-            "flash_button": true,
-            "telephoto": true,
-            "srgb": true,
-            "quality_mbps": 1.2,
-            "qualityMbps": 1.2
-        }));
-
-        // ==========================================
-        // 4. UPLOAD TỪ THƯ VIỆN & KHUNG WIDGET
-        // ==========================================
-        setKey("camera_roll_preview_enabled", "true");
-        setKey("upload_use_heif_main", "true");
-        setKey("internal_camera_roll_video_upload_enabled", "true");
-        setKey("live_photos_capture_enabled", "true");
-        setKey("live_photos_viewing_enabled", "true");
-        
-        setKey("custom_widget_frames_unlocked", "true");
-        setKey("custom_widget_frames_enabled", "true");
-        setKey("widget_frames_unlocked", "true");
-        setKey("widget_frames_enabled", "true");
-        setKey("app_icon_picker", "true");
-
-        // ==========================================
-        // 5. CHẶN QUẢNG CÁO TUYỆT ĐỐI
-        // ==========================================
-        setKey("history_ads_mode", "disabled");
-        setKey("history_ads_floor_price", "0");
-
-        // ==========================================
-        // 6. ÉP MỞ KHÓA TÍNH NĂNG TRONG HỆ THỐNG
-        // ==========================================
-        let gates = {};
-        if (obj.entries["feature_gates"]) {
-            try { gates = JSON.parse(obj.entries["feature_gates"]); } catch(e){}
-        }
-        const unlockFeatures = [
-            "app_icon_picker", "camera_roll", "camera_theme", "locket_views", 
-            "long_captions", "longer_video", "unlimited_friends", "profile_badge", 
-            "custom_widget_frames", "longerVideo", "video", "widget_frame", 
-            "live_photos", "gold_camera_themes", "gold_badge", "groups",
-            "widget_frame_events", "seasonal_theme", "event_theme"
+        // BƠM TOÀN BỘ DATA MEME & CÔNG CỤ GỐC TỪ FILE JSON CỦA BẠN
+        const customOverlays = [
+            {
+                "section": "💛 Sticker",
+                "items": [
+                    {"overlay_id": "sticker:love", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "I love you", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "💛"}, "background": {"colors": ["#FF5F6D", "#FFC371"], "material_blur": "thick"}}},
+                    {"overlay_id": "sticker:cute", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Cutie", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🥰"}, "background": {"colors": ["#FF758C", "#FF7EB3"], "material_blur": "thick"}}},
+                    {"overlay_id": "sticker:vip", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "VIP", "text_color": "#4A2E00", "icon": {"type": "emoji", "data": "👑"}, "background": {"colors": ["#F7971E", "#FFD200"], "material_blur": "thick"}}},
+                    {"overlay_id": "sticker:hot", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Hot", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🔥"}, "background": {"colors": ["#f12711", "#f5af19"], "material_blur": "thick"}}}
+                ]
+            },
+            {
+                "section": "😎 Meme Việt",
+                "items": [
+                    {"overlay_id": "meme:song_ao", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Sống ảo tí", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "📸"}, "background": {"colors": ["#8E2DE2", "#4A00E0"], "material_blur": "thick"}}},
+                    {"overlay_id": "meme:dep_trai", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Đẹp trai có gì sai", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "😎"}, "background": {"colors": ["#0F2027", "#2C5364"], "material_blur": "thick"}}},
+                    {"overlay_id": "meme:xinh_san", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Xinh sẵn rồi", "text_color": "#4A2E00", "icon": {"type": "emoji", "data": "💅"}, "background": {"colors": ["#FFDEE9", "#B5FFFC"], "material_blur": "thick"}}},
+                    {"overlay_id": "meme:met_vi_dep", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Mệt mỏi vì quá đẹp", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "😮‍💨"}, "background": {"colors": ["#355C7D", "#C06C84"], "material_blur": "thick"}}},
+                    {"overlay_id": "meme:flex_nhe", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Flex nhẹ", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "💪"}, "background": {"colors": ["#F7971E", "#FFD200"], "material_blur": "thick"}}},
+                    {"overlay_id": "meme:chanh_nhe", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Chảnh nhẹ thôi", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "💁"}, "background": {"colors": ["#FF512F", "#DD2476"], "material_blur": "thick"}}},
+                    {"overlay_id": "meme:goc_nghieng", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Góc nghiêng thần thánh", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "✨"}, "background": {"colors": ["#141E30", "#243B55"], "material_blur": "thick"}}},
+                    {"overlay_id": "meme:bao_nha", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Báo nhà vô đối", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🐧"}, "background": {"colors": ["#00B4DB", "#0083B0"], "material_blur": "thick"}}},
+                    {"overlay_id": "meme:het_hon", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Hết hồn chưa", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "😳"}, "background": {"colors": ["#EB3349", "#F45C43"], "material_blur": "thick"}}},
+                    {"overlay_id": "meme:an_gi_xinh", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Ăn gì mà xinh thế", "text_color": "#4A2E00", "icon": {"type": "emoji", "data": "🍚"}, "background": {"colors": ["#FDFC47", "#24FE41"], "material_blur": "thick"}}}
+                ]
+            },
+            {
+                "section": "Tính năng đặc biệt",
+                "items": [
+                    {"overlay_id": "caption:standard", "source": "local", "caption": {"type": "standard"}},
+                    {"overlay_id": "caption:poll", "source": "local", "caption": {"type": "poll"}},
+                    {"overlay_id": "caption:review", "source": "local", "caption": {"type": "review"}},
+                    {"overlay_id": "caption:color_palette", "source": "local", "caption": {"type": "color_palette"}},
+                    {"overlay_id": "caption:breaking_news", "source": "local", "caption": {"type": "breaking_news"}},
+                    {"overlay_id": "caption:streak", "source": "local", "caption": {"type": "streak"}},
+                    {"overlay_id": "caption:locket_count", "source": "local", "caption": {"type": "locket_count"}},
+                    {"overlay_id": "caption:star_sign", "source": "local", "caption": {"type": "star_sign"}},
+                    {"overlay_id": "caption:music", "source": "local", "caption": {"type": "music"}},
+                    {"overlay_id": "caption:location", "source": "local", "caption": {"type": "location"}},
+                    {"overlay_id": "caption:weather", "source": "local", "caption": {"type": "weather"}},
+                    {"overlay_id": "caption:time", "source": "local", "caption": {"type": "time"}}
+                ]
+            },
+            {
+                "section": "✨ Hot Trend Meme & Gen Z",
+                "items": [
+                    {"overlay_id": "caption:mi_muon_di_choi", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Mị muốn đi chơi ✈️", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "✈️"}, "background": {"colors": ["#1A2980", "#26D0CE"], "material_blur": "thick"}}},
+                    {"overlay_id": "caption:cute_khong_ne", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Cute không nè 🥰", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🥰"}, "background": {"colors": ["#FF758C", "#FF7EB3"], "material_blur": "ultra_thick"}, "effect": "snow"}},
+                    {"overlay_id": "caption:mot_phan_tram_tu_lap", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "1% tự lập 99% anh ơi 💸", "text_color": "#FFEA79", "icon": {"type": "emoji", "data": "💸"}, "background": {"colors": ["#11998E", "#38EF7D"], "material_blur": "thick"}}},
+                    {"overlay_id": "caption:oke_meme", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Oke 👍", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "👍"}, "background": {"colors": ["#232526", "#414345"], "material_blur": "thick"}}},
+                    {"overlay_id": "caption:lay_chua_bung_keo", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Lạy chúa bạn tôi bùng kèo ⚡️", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "⚡️"}, "background": {"colors": ["#432371", "#FAAE7B"], "material_blur": "ultra_thick"}}}
+                ]
+            },
+            {
+                "section": "⚡️ Cyberpunk & Neon Glow",
+                "items": [
+                    {"overlay_id": "caption:cyber_neon", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "CYBERPUNK 2077 ⚡️", "text_color": "#000000", "icon": {"type": "emoji", "data": "⚡️"}, "background": {"colors": ["#00F2FE", "#4FACFE"]}, "border": {"color": "#FFFFFF", "width": 1.5}}},
+                    {"overlay_id": "caption:matrix_system", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "SYSTEM OVERLOAD 👾", "text_color": "#00FF66", "icon": {"type": "emoji", "data": "🕹️"}, "background": {"colors": ["#051907", "#0D3212"]}, "border": {"color": "#00FF66", "width": 1.5}}},
+                    {"overlay_id": "caption:vaporwave_80s", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "RETRO WAVE 📼", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🪩"}, "background": {"colors": ["#FF007F", "#7928CA"]}}},
+                    {"overlay_id": "caption:toxic_glow", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "TOXIC VIBES ☣️", "text_color": "#000000", "icon": {"type": "emoji", "data": "🧪"}, "background": {"colors": ["#76B852", "#8DC26F"]}}}
+                ]
+            },
+            {
+                "section": "💎 Luxury VIP & Rich Kid",
+                "items": [
+                    {"overlay_id": "caption:pure_gold_vip", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "BILLIONAIRE MINDSET 👑", "text_color": "#2C1E00", "icon": {"type": "emoji", "data": "🏆"}, "background": {"colors": ["#FFE259", "#FFA751"]}}},
+                    {"overlay_id": "caption:black_card", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "BLACK CARD MEMBER 💳", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "💎"}, "background": {"colors": ["#141E30", "#243B55"]}, "border": {"color": "#C0C0C0", "width": 1.5}}},
+                    {"overlay_id": "caption:emerald_luxury", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "EMERALD GLOW ✨", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "✨"}, "background": {"colors": ["#11998E", "#38EF7D"]}}},
+                    {"overlay_id": "caption:ootd_classy", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "OOTD VIP 🕶", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🕶"}, "background": {"colors": ["#232526", "#414345"]}}}
+                ]
+            },
+            {
+                "section": "🌸 Dễ thương & Pastel",
+                "items": [
+                    {"overlay_id": "caption:pastel_pink", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Cutie Pie 🌸", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🎀"}, "background": {"colors": ["#FFAAA6", "#FF85A2"]}}},
+                    {"overlay_id": "caption:baby_love", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Baby Love 💖", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🧸"}, "background": {"colors": ["#FF758C", "#FF7EB3"]}}},
+                    {"overlay_id": "caption:sweet_dream", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Sweet Dream 🫧", "text_color": "#1C3144", "icon": {"type": "emoji", "data": "☁️"}, "background": {"colors": ["#A1C4FD", "#C2E9FB"]}}},
+                    {"overlay_id": "caption:hello_kitty", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Hello Kitty 🐱", "text_color": "#4A0E2E", "icon": {"type": "emoji", "data": "🌸"}, "background": {"colors": ["#FF9A9E", "#FECFEF"]}}},
+                    {"overlay_id": "caption:matcha_latte", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Matcha Latte 🍵", "text_color": "#1F3826", "icon": {"type": "emoji", "data": "🍃"}, "background": {"colors": ["#D4E7C5", "#99BC85"]}}}
+                ]
+            },
+            {
+                "section": "🌙 Vibe Chill & Đêm Muộn",
+                "items": [
+                    {"overlay_id": "caption:night_vibes", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Night Vibes 🌌", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🪐"}, "background": {"colors": ["#654EA3", "#EAAFC8"]}}},
+                    {"overlay_id": "caption:two_am_thoughts", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "2:00 AM Thoughts 🌙", "text_color": "#E2E8F0", "icon": {"type": "emoji", "data": "💭"}, "background": {"colors": ["#0F2027", "#203A43"]}}},
+                    {"overlay_id": "caption:coffee_rain", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Rainy Day ☕️🌧️", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "☕️"}, "background": {"colors": ["#4B3832", "#854442"]}}},
+                    {"overlay_id": "caption:golden_hour", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Golden Hour ✨", "text_color": "#2C1E00", "icon": {"type": "emoji", "data": "☀️"}, "background": {"colors": ["#FFE259", "#FFA751"]}}}
+                ]
+            },
+            {
+                "section": "🎬 Tuyệt Đối Điện Ảnh & Deep Vibe",
+                "items": [
+                    {"overlay_id": "caption:tuyet_doi_dien_anh", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Tuyệt đối điện ảnh 🎬", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🎞️"}, "background": {"colors": ["#141E30", "#243B55"]}}},
+                    {"overlay_id": "caption:neu_ca_doi_khong_ruc_ro", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Nếu cả đời không rực rỡ thì sao? 🌅", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🌇"}, "background": {"colors": ["#2C3E50", "#FD746C"]}}},
+                    {"overlay_id": "caption:co_dien_ton_trong", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Cổ điển, tôn trọng 🍷", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🎩"}, "background": {"colors": ["#232526", "#414345"]}}},
+                    {"overlay_id": "caption:kha_niche", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Khá niche 🎨", "text_color": "#1A1A1A", "icon": {"type": "emoji", "data": "🖌️"}, "background": {"colors": ["#ECE9E6", "#FFFFFF"]}}},
+                    {"overlay_id": "caption:the_ma_lai_hay", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Thế mà lại hay ☕️", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "💡"}, "background": {"colors": ["#4B3832", "#854442"]}}},
+                    {"overlay_id": "caption:ve_ke_khong_ai_tin", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Về kể không ai tin 🛸", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "👽"}, "background": {"colors": ["#0F2027", "#2C5364"]}}},
+                    {"overlay_id": "caption:hoi_chieu_troi_mua", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Hồi chiều trời mưa 🌧️", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🌧️"}, "background": {"colors": ["#3a7bd5", "#3a6073"], "material_blur": "ultra_thick"}, "effect": "snow"}},
+                    {"overlay_id": "caption:huong_noi_het_doi", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Hướng nội hết phần đời còn lại 🎧", "text_color": "#E2E8F0", "icon": {"type": "emoji", "data": "🧎‍♂️"}, "background": {"colors": ["#191654", "#43C6AC"]}}},
+                    {"overlay_id": "caption:suy_nghi_tich_cuc", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Suy nghĩ tích cực, đời bớt tiêu cực 🌈", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "✨"}, "background": {"colors": ["#11998E", "#38EF7D"]}}},
+                    {"overlay_id": "caption:chua_muon_noi", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Có nhiều cái chưa muốn nói đâu 🤐", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "👀"}, "background": {"colors": ["#3A1C71", "#D76D77"]}}}
+                ]
+            },
+            {
+                "section": "💼 Deadline & Đi Làm Công Ty",
+                "items": [
+                    {"overlay_id": "caption:nhiem_vu_he_thong", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Nhiệm vụ hệ thống 🎯", "text_color": "#000000", "icon": {"type": "emoji", "data": "👾"}, "background": {"colors": ["#00F2FE", "#4FACFE"]}}},
+                    {"overlay_id": "caption:di_lam_cong_ty", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Đi làm công ty không, em xin cho? 💼", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🏢"}, "background": {"colors": ["#2980B9", "#2C3E50"]}}},
+                    {"overlay_id": "caption:cong_mot_may_deadline", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "+1 máy bị deadline dí 🏃‍♂️💨", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🔥"}, "background": {"colors": ["#FF416C", "#FF4B2B"]}}},
+                    {"overlay_id": "caption:doc_so_tai_khoan", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Đọc số tài khoản đi 💳", "text_color": "#1A1A1A", "icon": {"type": "emoji", "data": "💸"}, "background": {"colors": ["#FFE259", "#FFA751"]}}},
+                    {"overlay_id": "caption:con_cai_nit", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Còn cái nịt 💸", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🎋"}, "background": {"colors": ["#56AB2F", "#A8E063"]}}},
+                    {"overlay_id": "caption:dich_cabin", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Dịch cabin 🎙️", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🎧"}, "background": {"colors": ["#654EA3", "#EAAFC8"]}}},
+                    {"overlay_id": "caption:canh_bao_co_hat", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Cảnh báo có hát 🎤", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "⚠️"}, "background": {"colors": ["#F3904F", "#3B4371"]}}},
+                    {"overlay_id": "caption:toi_la_nan_nhan", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Tôi là nạn nhân của… 🫠", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🩹"}, "background": {"colors": ["#5C258D", "#4389A2"]}}},
+                    {"overlay_id": "caption:giam_suc_manh_tuong", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Giảm sức mạnh con tướng này giúp em ⚔️", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🛡️"}, "background": {"colors": ["#8E0E00", "#1F1C18"]}}}
+                ]
+            },
+            {
+                "section": "🤨 Cà Khịa & Hay Ra Dẻ",
+                "items": [
+                    {"overlay_id": "caption:than_chua_ma_gion", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Thân chưa mà giỡn? 🤨", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "✋"}, "background": {"colors": ["#BA8B02", "#181818"]}}},
+                    {"overlay_id": "caption:ai_hoi", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Ai hỏi? 🤷‍♂️", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "❓"}, "background": {"colors": ["#232526", "#414345"]}}},
+                    {"overlay_id": "caption:ai_muon", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Ai mượn? 💅", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "💅"}, "background": {"colors": ["#EE9CA7", "#FFDDE1"]}}},
+                    {"overlay_id": "caption:ai_so_thi_di_ve", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Ai sợ thì đi về 🚪", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🚶‍♂️"}, "background": {"colors": ["#C0392B", "#8E44AD"]}}},
+                    {"overlay_id": "caption:hay_ra_de_qua_a", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Hay ra dẻ quá à! 🙄", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "😒"}, "background": {"colors": ["#F857A6", "#FF5858"]}}},
+                    {"overlay_id": "caption:lam_qua_no_o_de", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Làm quá nó ô dề 🤦‍♂️", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🎭"}, "background": {"colors": ["#E65C00", "#F9D423"]}}},
+                    {"overlay_id": "caption:mac_co_qua_hai_oi", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Mắc cỡ quá hai ơi! 🙈", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🫣"}, "background": {"colors": ["#FFAAA6", "#FF85A2"]}}},
+                    {"overlay_id": "caption:an_noi_xa_lo", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Ăn nói xà lơ 🤡", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🎪"}, "background": {"colors": ["#8A2387", "#E94057"]}}},
+                    {"overlay_id": "caption:thua_gia_cat_luong", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Thua Gia Cát Lượng đúng cây quạt 🪭", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🪭"}, "background": {"colors": ["#4E54C8", "#8F94FB"]}}},
+                    {"overlay_id": "caption:tuong_ai_cung_co", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Tôi tưởng ai cũng có chứ ta 💅", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "💁‍♀️"}, "background": {"colors": ["#5433FF", "#20BDFF"]}}},
+                    {"overlay_id": "caption:ban_noi_the_thi_chiu", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Bạn nói thế thì tôi chịu 🙃", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🤷‍♀️"}, "background": {"colors": ["#434343", "#000000"]}}},
+                    {"overlay_id": "caption:tao_thay_tao_tuc", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Tao thấy mà tao tức á 😤", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "💢"}, "background": {"colors": ["#D31027", "#EA384D"]}}},
+                    {"overlay_id": "caption:hong_be_oi", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Hông bé ơi! 🙅", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🙅‍♀️"}, "background": {"colors": ["#FF416C", "#FF4B2B"]}}},
+                    {"overlay_id": "caption:e_y_la", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Ê, ý là… 👀", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🤫"}, "background": {"colors": ["#1F4037", "#99F2C8"]}}},
+                    {"overlay_id": "caption:khong_ay_thi_minh", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Không ấy thì mình… 🤫", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "👉👈"}, "background": {"colors": ["#614385", "#516395"]}}}
+                ]
+            },
+            {
+                "section": "🚨 Cứu Ní & Kiếp Nạn Thứ 82",
+                "items": [
+                    {"overlay_id": "caption:ni_oi_cuu_ni", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Ní ơi, cứu ní! 🆘", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🆘"}, "background": {"colors": ["#ED213A", "#93291E"]}}},
+                    {"overlay_id": "caption:et_o_et", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Ét ô ét! 🚨", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🚨"}, "background": {"colors": ["#FF0844", "#FFB199"]}}},
+                    {"overlay_id": "caption:het_cuu", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Hết cứu 💀", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🪦"}, "background": {"colors": ["#232526", "#000000"]}}},
+                    {"overlay_id": "caption:cuu_duoc_thi_cuu", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Cứu được thì cứu 🚑", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🩹"}, "background": {"colors": ["#EB3349", "#F45C43"]}}},
+                    {"overlay_id": "caption:kiep_nan_thu_82", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Kiếp nạn thứ 82 🧘‍♂️", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🪷"}, "background": {"colors": ["#E65C00", "#F9D423"]}}},
+                    {"overlay_id": "caption:boc_trung_sit_rit", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Bốc trúng sít rịt 🥶", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🧊"}, "background": {"colors": ["#00C9FF", "#92FE9D"]}}},
+                    {"overlay_id": "caption:ua_alo", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Ủa alo? 📞", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "📱"}, "background": {"colors": ["#59C173", "#a17fe0"]}}},
+                    {"overlay_id": "caption:gi_vay_troi", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Gì vậy trời? ⚡️", "text_color": "#000000", "icon": {"type": "emoji", "data": "⚡️"}, "background": {"colors": ["#FFE259", "#FFA751"]}}},
+                    {"overlay_id": "caption:cai_quai_gi_vay", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Cái quái gì vậy? ❓", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🤔"}, "background": {"colors": ["#485563", "#29323c"]}}},
+                    {"overlay_id": "caption:chiu_luon_a", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Chịu luôn á 🤦‍♀️", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🫠"}, "background": {"colors": ["#3E5151", "#DECBA4"]}}},
+                    {"overlay_id": "caption:em_chiu_that", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Em chịu, em chịu thật 🏳️", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🏳️"}, "background": {"colors": ["#757F9A", "#D7DDE8"]}}},
+                    {"overlay_id": "caption:gwenchana", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Gwenchana 🥲", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🥲"}, "background": {"colors": ["#536976", "#292E49"]}}},
+                    {"overlay_id": "caption:xin_loi_duoc_chua", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Xin lỗi được chưa? 🥺", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🥺"}, "background": {"colors": ["#834D9B", "#D04ED6"]}}},
+                    {"overlay_id": "caption:roi_ai_khoc", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Rồi ai khóc? 🥲", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "💧"}, "background": {"colors": ["#2193B0", "#6DD5ED"]}}},
+                    {"overlay_id": "caption:nin_di", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Nín! 🤫", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🤐"}, "background": {"colors": ["#E53935", "#E35D5B"]}}}
+                ]
+            },
+            {
+                "section": "🔥 Đỉnh Nóc Kịch Trần & Trend Quốc Dân",
+                "items": [
+                    {"overlay_id": "caption:dinh_noc_kich_tran", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Đỉnh nóc, kịch trần, bay phấp phới 🚀", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🚀"}, "background": {"colors": ["#FF416C", "#8A2387"]}}},
+                    {"overlay_id": "caption:dung_nhan_sai_cai", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Đúng nhận, sai cãi 🍉", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🔮"}, "background": {"colors": ["#11998E", "#38EF7D"]}}},
+                    {"overlay_id": "caption:mai_man_mai_keo", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Mãi mận, mãi keo 🥭", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🥭"}, "background": {"colors": ["#F7971E", "#FFD200"]}}},
+                    {"overlay_id": "caption:keo_li_tai_chau", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Keo lì, tái châu 🧋", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🧋"}, "background": {"colors": ["#D39D38", "#67B26F"]}}},
+                    {"overlay_id": "caption:slay_qua", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Slay quá! 💅✨", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "💅"}, "background": {"colors": ["#FC466B", "#3F5EFB"]}}},
+                    {"overlay_id": "caption:xin_via", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Xin vía ✨", "text_color": "#1A1A1A", "icon": {"type": "emoji", "data": "✨"}, "background": {"colors": ["#FFE259", "#FFA751"]}}},
+                    {"overlay_id": "caption:mai_det_ti_ni", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Mai đẹt ti ni 💖", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🫶"}, "background": {"colors": ["#FF758C", "#FF7EB3"]}}},
+                    {"overlay_id": "caption:bat_ngo_chua_ba_gia", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Bất ngờ chưa bà già? 👵", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🎉"}, "background": {"colors": ["#F953C6", "#B91D73"]}}},
+                    {"overlay_id": "caption:bing_chilling", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Bing chilling 🍦", "text_color": "#1A1A1A", "icon": {"type": "emoji", "data": "🍦"}, "background": {"colors": ["#A1C4FD", "#C2E9FB"]}}},
+                    {"overlay_id": "caption:a_loi", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "À lôi 🏔️", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "⛰️"}, "background": {"colors": ["#134E5E", "#71B280"]}}},
+                    {"overlay_id": "caption:trai_thanh_long_mi_tom", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Lần đầu tiên trái thanh long có trong mì tôm 🍜🐉", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🍜"}, "background": {"colors": ["#EC008C", "#FC6767"]}}},
+                    {"overlay_id": "caption:com_nuoc_gi_chua", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Cơm nước gì chưa người đẹp? 🍲", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🍚"}, "background": {"colors": ["#FF9966", "#FF5E62"]}}}
+                ]
+            },
+            {
+                "section": "🤣 Tâm trạng & Meme Gen Z",
+                "items": [
+                    {"overlay_id": "caption:slay_queen", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Hôm nay quá là Slay 💅✨", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "💅"}, "background": {"colors": ["#FC466B", "#3F5EFB"]}}},
+                    {"overlay_id": "caption:deadline_chasing", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Deadline dí chạy không kịp 🏃‍♂️💨", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🔥"}, "background": {"colors": ["#FF416C", "#FF4B2B"]}}},
+                    {"overlay_id": "caption:out_of_money", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Hết tiền rồi 💸", "text_color": "#000000", "icon": {"type": "emoji", "data": "💸"}, "background": {"colors": ["#56AB2F", "#A8E063"]}}},
+                    {"overlay_id": "caption:sleepy", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Buồn ngủ xỉu 😴", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "🌙"}, "background": {"colors": ["#141E30", "#243B55"]}}},
+                    {"overlay_id": "caption:miss_you_all", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Nhớ người yêu 🥰", "text_color": "#FFFFFF", "icon": {"type": "emoji", "data": "❤️🔥"}, "background": {"colors": ["#EC0C00", "#FF493F"]}}},
+                    {"overlay_id": "caption:party_time", "source": "remote", "caption": {"type": "static_content", "max_lines": 1, "text": "Party Time! 🪩", "text_color": "#000000", "icon": {"type": "emoji", "data": "🪩"}, "background": {"colors": ["#5EFFF5", "#FCFF57"]}}}
+                ]
+            }
         ];
-        for (let f of unlockFeatures) gates[f] = "enabled";
-        gates["remove_ads"] = "subscriber";
-        setKey("feature_gates", JSON.stringify(gates));
+        
+        setKey("overlay_items", JSON.stringify(customOverlays));
 
-        // Yêu cầu app tải cấu hình mới
+        // 5. GHI ĐÈ CỔNG TÍNH NĂNG (Feature Gates)
+        if (obj.entries["feature_gates"]) {
+            try {
+                let gates = JSON.parse(obj.entries["feature_gates"]);
+                const unlockFeatures = [
+                    "app_icon_picker", "camera_roll", "camera_theme", "locket_views", 
+                    "longer_video", "unlimited_friends", "profile_badge", 
+                    "custom_widget_frames", "longerVideo", "video", "widget_frame", 
+                    "live_photos", "gold_camera_themes", "gold_badge", "groups"
+                ];
+                for (let f of unlockFeatures) gates[f] = "enabled";
+                gates["remove_ads"] = "subscriber";
+                setKey("feature_gates", JSON.stringify(gates));
+            } catch(e){}
+        }
+
         obj.state = "UPDATE";
         body = JSON.stringify(obj);
     } catch (e) {
