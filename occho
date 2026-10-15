@@ -1,0 +1,130 @@
+/*
+ * Locket Gold Unlock Script - Trích xuất chuẩn từ RemoteConfig.json
+ * Fix lỗi Âm thanh & Mất Chú thích / Meme
+ */
+
+let body = $response.body;
+
+if (body) {
+    try {
+        let obj = JSON.parse(body);
+        if (!obj.entries) obj.entries = {};
+
+        // Hàm hỗ trợ gán giá trị an toàn định dạng String cho Firebase
+        const setKey = (k, v) => { obj.entries[k] = v; };
+
+        // ==========================================
+        // 1. MỞ KHÓA TÀI KHOẢN GOLD & GIAO DIỆN
+        // ==========================================
+        setKey("purchases_enabled", "true");
+        setKey("purchases_entitlement", "Gold");
+        setKey("gold_member", "true");
+        setKey("gold_membership", "true");
+        setKey("gold_card", "true");
+        setKey("gold_since", "true");
+        setKey("gold_since_badge_enabled", "true");
+        setKey("gold_member_since_enabled", "true");
+        setKey("locket_gold_badge", "true");
+        setKey("profile_gold_badge", "true");
+        setKey("gold_membership_card", "true");
+        setKey("show_gold_since", "true");
+        setKey("upsell_features", JSON.stringify({
+            "custom_widget_frames": true,
+            "app_icon_picker": true,
+            "unlimited_friends": true
+        }));
+
+        // ==========================================
+        // 2. KHÔI PHỤC CHÚ THÍCH (GIỜ, THỜI TIẾT, NHẠC)
+        // ==========================================
+        setKey("captions_enabled", "true");
+        setKey("long_captions", "true");
+        setKey("music_caption_enabled", "true");
+        setKey("overlay_navigator_enabled", "true");
+        
+        setKey("overlays_config", JSON.stringify({
+            "legacy_captions_enabled": true,
+            "send_enabled": true,
+            "view_enabled": true
+        }));
+        setKey("overlays_v2_config", JSON.stringify({
+            "suggestions_enabled": true
+        }));
+        setKey("overlay_dynamic_captions", JSON.stringify([
+            "standard", "location", "weather", "time"
+        ]));
+        // Không can thiệp "overlay_items" để giữ nguyên 100% kho Meme gốc của Server.
+
+        // ==========================================
+        // 3. FIX CAMERA: ÂM THANH, MIC & VIDEO 30S
+        // ==========================================
+        setKey("video_sound_enabled", "true");
+        setKey("microphone_enabled", "true");
+        setKey("camera_microphone_enabled", "true");
+        setKey("longer_video_enabled", "true");
+        setKey("longer_videos_enabled", "true");
+        setKey("gold_max_duration", "30.0");
+        setKey("max_video_duration", "30.0");
+        setKey("goldMaxDuration", "30.0");
+
+        setKey("camera", JSON.stringify({
+            "gold_max_duration": 30,
+            "goldMaxDuration": 30,
+            "ultra_wide": true,
+            "ultraWide": true,
+            "volume_button": true,
+            "volumeButton": true,
+            "flash_button": true,
+            "telephoto": true,
+            "srgb": true,
+            "quality_mbps": 1.2,
+            "qualityMbps": 1.2
+        }));
+
+        // ==========================================
+        // 4. UPLOAD TỪ THƯ VIỆN & KHUNG WIDGET
+        // ==========================================
+        setKey("camera_roll_preview_enabled", "true");
+        setKey("upload_use_heif_main", "true");
+        setKey("internal_camera_roll_video_upload_enabled", "true");
+        setKey("live_photos_capture_enabled", "true");
+        setKey("live_photos_viewing_enabled", "true");
+        
+        setKey("custom_widget_frames_unlocked", "true");
+        setKey("custom_widget_frames_enabled", "true");
+        setKey("widget_frames_unlocked", "true");
+        setKey("widget_frames_enabled", "true");
+        setKey("app_icon_picker", "true");
+
+        // ==========================================
+        // 5. CHẶN QUẢNG CÁO TUYỆT ĐỐI
+        // ==========================================
+        setKey("history_ads_mode", "disabled");
+        setKey("history_ads_floor_price", "0");
+
+        // ==========================================
+        // 6. ÉP MỞ KHÓA TÍNH NĂNG TRONG HỆ THỐNG
+        // ==========================================
+        let gates = {};
+        if (obj.entries["feature_gates"]) {
+            try { gates = JSON.parse(obj.entries["feature_gates"]); } catch(e){}
+        }
+        const unlockFeatures = [
+            "app_icon_picker", "camera_roll", "camera_theme", "locket_views", 
+            "long_captions", "longer_video", "unlimited_friends", "profile_badge", 
+            "custom_widget_frames", "longerVideo", "video", "widget_frame", 
+            "live_photos", "gold_camera_themes", "gold_badge", "groups",
+            "widget_frame_events", "seasonal_theme", "event_theme"
+        ];
+        for (let f of unlockFeatures) gates[f] = "enabled";
+        gates["remove_ads"] = "subscriber";
+        setKey("feature_gates", JSON.stringify(gates));
+
+        // Yêu cầu app tải cấu hình mới
+        obj.state = "UPDATE";
+        body = JSON.stringify(obj);
+    } catch (e) {
+        console.log("Locket Script Error: " + e);
+    }
+}
+$done({ body });
