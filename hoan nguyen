@@ -1,6 +1,6 @@
 /*
- * Locket Reset Script - Đưa ứng dụng về bản thường
- * Chức năng: Ép Locket tải lại cấu hình gốc từ máy chủ và xóa sạch cache Mod
+ * Locket Reset Script - Bản Mạnh
+ * Ép ghi đè toàn bộ cờ Gold thành "false" để tẩy trắng Cache
  */
 
 let body = $response.body;
@@ -8,14 +8,56 @@ let body = $response.body;
 if (body) {
     try {
         let obj = JSON.parse(body);
-        
-        // Chỉ cần ép trạng thái UPDATE với nguyên bản dữ liệu gốc (không thêm cờ Mod)
-        // Locket sẽ tự động ghi đè và xóa bỏ toàn bộ tính năng Gold/Meme ảo
+        if (!obj.entries) obj.entries = {};
+
+        const setKey = (k, v) => { obj.entries[k] = v; };
+
+        // 1. TẮT TÀI KHOẢN GOLD
+        setKey("purchases_enabled", "false");
+        setKey("purchases_entitlement", "null");
+        setKey("gold_member", "false");
+        setKey("gold_membership", "false");
+        setKey("gold_card", "false");
+        setKey("gold_since", "false");
+        setKey("gold_since_badge_enabled", "false");
+        setKey("gold_member_since_enabled", "false");
+        setKey("locket_gold_badge", "false");
+        setKey("profile_gold_badge", "false");
+        setKey("gold_membership_card", "false");
+        setKey("show_gold_since", "false");
+
+        // 2. KHÓA LẠI VIDEO & CAMERA ROLL
+        setKey("gold_max_duration", "10.0");
+        setKey("max_video_duration", "10.0");
+        setKey("video_max_duration", "10.0");
+        setKey("goldMaxDuration", "10.0");
+        setKey("longer_video_enabled", "false");
+        setKey("longer_videos_enabled", "false");
+        setKey("internal_camera_roll_video_upload_enabled", "false");
+        setKey("camera_roll_preview_enabled", "false");
+        setKey("upload_use_heif_main", "false");
+
+        // 3. KHÓA KHUNG WIDGET & ICON APP
+        setKey("custom_widget_frames_unlocked", "false");
+        setKey("custom_widget_frames_enabled", "false");
+        setKey("widget_frames_unlocked", "false");
+        setKey("widget_frames_enabled", "false");
+        setKey("app_icon_picker", "false");
+
+        // 4. KHÔI PHỤC QUẢNG CÁO (Xóa lệnh chặn ads để trả về mặc định)
+        delete obj.entries["history_ads_mode"];
+        delete obj.entries["history_ads_floor_price"];
+
+        // 5. ĐÓNG TOÀN BỘ CỔNG TÍNH NĂNG (Feature Gates)
+        setKey("feature_gates", "{}");
+        setKey("upsell_features", "{}");
+
+        // Ép Locket cập nhật ngay lập tức
         obj.state = "UPDATE";
 
         body = JSON.stringify(obj);
     } catch (e) {
-        console.log("Locket Reset Error: " + e);
+        console.log("Locket Reset Script Error: " + e);
     }
 }
 
